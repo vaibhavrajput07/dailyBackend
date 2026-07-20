@@ -1,0 +1,62 @@
+### Daily backend smoke test
+### Run top to bottom against a fresh daily schema. Requires an HTTP client
+### that supports .http files (VS Code REST Client / IntelliJ HTTP Client),
+### or translate each block to curl manually.
+
+@baseUrl = http://localhost:8080
+
+### 1. Signup
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "businessName": "Sharma Medical Store",
+  "ownerName": "Ravi Sharma",
+  "mobileNumber": "9876543210",
+  "password": "password123",
+  "businessType": "MEDICAL_STORE"
+}
+
+### 2. Login (capture the token from the response and set it below)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "mobileNumber": "9876543210",
+  "password": "password123"
+}
+
+### 3. Get business profile
+GET {{baseUrl}}/business
+Authorization: Bearer {{token}}
+
+### 4. Add a sale (amount only — must be fast, no other required fields)
+POST {{baseUrl}}/transactions/sale
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 450
+}
+
+### 5. List categories (triggers lazy default seeding for MEDICAL_STORE)
+GET {{baseUrl}}/settings/categories
+Authorization: Bearer {{token}}
+
+### 6. Add an expense with a category
+POST {{baseUrl}}/transactions/expense
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 120,
+  "categoryId": 1
+}
+
+### 7. Today's dashboard — should show sales=450, expenses=120, profit=330
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{token}}
+
+### 8. Monthly report for the current month
+GET {{baseUrl}}/reports/monthly?year=2026&month=7
+Authorization: Bearer {{token}}
