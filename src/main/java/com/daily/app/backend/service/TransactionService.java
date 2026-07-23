@@ -41,7 +41,7 @@ public class TransactionService {
                 .amount(request.amount())
                 .note(request.note())
                 .paymentMethod(request.paymentMethod())
-                .transactionDate(Instant.now())
+                .transactionDate(request.transactionDate() != null ? request.transactionDate() : Instant.now())
                 .build();
 
         return transactionMapper.toResponse(transactionRepository.save(transaction));
@@ -62,7 +62,7 @@ public class TransactionService {
                 .category(category)
                 .note(request.note())
                 .paymentMethod(request.paymentMethod())
-                .transactionDate(Instant.now())
+                .transactionDate(request.transactionDate() != null ? request.transactionDate() : Instant.now())
                 .build();
 
         return transactionMapper.toResponse(transactionRepository.save(transaction));
