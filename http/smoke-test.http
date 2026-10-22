@@ -5,7 +5,17 @@
 
 @baseUrl = http://localhost:8080
 
-### 1. Signup
+### 1a. Signup step 1 — email a verification code
+### (with MAIL_HOST unset the code is printed in the backend log instead)
+POST {{baseUrl}}/auth/signup/otp
+Content-Type: application/json
+
+{
+  "mobileNumber": "9876543210",
+  "email": "ravi@example.com"
+}
+
+### 1b. Signup step 2 — create the account with the code
 POST {{baseUrl}}/auth/signup
 Content-Type: application/json
 
@@ -13,8 +23,28 @@ Content-Type: application/json
   "businessName": "Sharma Medical Store",
   "ownerName": "Ravi Sharma",
   "mobileNumber": "9876543210",
+  "email": "ravi@example.com",
+  "otp": "123456",
   "password": "password123",
   "businessType": "MEDICAL_STORE"
+}
+
+### 1c. Forgot password — email a reset code to the account's address
+POST {{baseUrl}}/auth/password/forgot
+Content-Type: application/json
+
+{
+  "mobileNumber": "9876543210"
+}
+
+### 1d. Reset password with the code (returns a token, like login)
+POST {{baseUrl}}/auth/password/reset
+Content-Type: application/json
+
+{
+  "mobileNumber": "9876543210",
+  "otp": "123456",
+  "newPassword": "password123"
 }
 
 ### 2. Login (capture the token from the response and set it below)
@@ -60,3 +90,41 @@ Authorization: Bearer {{token}}
 ### 8. Monthly report for the current month
 GET {{baseUrl}}/reports/monthly?year=2026&month=7
 Authorization: Bearer {{token}}
+
+### 9. Multi-business: create a second business (resend with the same clientId → same business, no duplicate)
+POST {{baseUrl}}/business
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "businessName": "Sharma Car Showroom",
+  "businessType": "OTHER",
+  "clientId": "smoke-test-showroom"
+}
+
+### 10. List all businesses (set {{businessId}} to the new business's id)
+GET {{baseUrl}}/business/all
+Authorization: Bearer {{token}}
+
+### 11. Add a sale to the second business
+POST {{baseUrl}}/transactions/sale
+Authorization: Bearer {{token}}
+X-Business-Id: {{businessId}}
+Content-Type: application/json
+
+{
+  "amount": 50000
+}
+
+### 12. Login business is unchanged without the header — still sales=450
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{token}}
+
+### 13. All Businesses dashboard — totalSales=50450, one summary per business
+GET {{baseUrl}}/dashboard/all
+Authorization: Bearer {{token}}
+
+### 14. Another user's business id → 404
+GET {{baseUrl}}/transactions
+Authorization: Bearer {{token}}
+X-Business-Id: 999999

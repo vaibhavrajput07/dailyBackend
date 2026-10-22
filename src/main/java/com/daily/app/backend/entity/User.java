@@ -31,11 +31,12 @@ public class User {
     @Column(name = "mobile_number", nullable = false, unique = true, length = 15)
     private String mobileNumber;
 
+    /** Verified by OTP at signup; where forgot-password codes are sent. Null on pre-OTP accounts. */
+    @Column(unique = true)
+    private String email;
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
-
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Business business;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private Instant createdAt;

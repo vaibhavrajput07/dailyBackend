@@ -12,6 +12,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,6 +25,8 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     private static final long WINDOW_MILLIS = 60_000;
     private static final int MAX_REQUESTS_PER_WINDOW = 5;
+    private static final Set<String> LIMITED_PATHS = Set.of(
+            "/auth/login", "/auth/signup", "/auth/signup/otp", "/auth/password/forgot", "/auth/password/reset");
 
     private final ConcurrentMap<String, RateLimitWindow> windows = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper;
@@ -34,8 +37,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return !("/auth/login".equals(path) || "/auth/signup".equals(path));
+        return !LIMITED_PATHS.contains(request.getRequestURI());
     }
 
     @Override

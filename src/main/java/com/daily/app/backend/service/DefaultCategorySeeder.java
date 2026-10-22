@@ -17,7 +17,8 @@ public final class DefaultCategorySeeder {
             BusinessType.BAKERY, List.of("Raw Material", "Packaging"),
             BusinessType.CLINIC, List.of("Medical Supplies", "Equipment"),
             BusinessType.GARAGE, List.of("Spare Parts", "Tools"),
-            BusinessType.HARDWARE_SHOP, List.of("Stock Purchase", "Transport")
+            BusinessType.HARDWARE_SHOP, List.of("Stock Purchase", "Transport"),
+            BusinessType.OTHER, List.of("Stock Purchase", "Transport")
     );
 
     private DefaultCategorySeeder() {

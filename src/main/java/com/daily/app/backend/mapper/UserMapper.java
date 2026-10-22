@@ -11,6 +11,7 @@ public class UserMapper {
         return User.builder()
                 .ownerName(request.ownerName())
                 .mobileNumber(request.mobileNumber())
+                .email(request.normalizedEmail())
                 .passwordHash(passwordHash)
                 .build();
     }

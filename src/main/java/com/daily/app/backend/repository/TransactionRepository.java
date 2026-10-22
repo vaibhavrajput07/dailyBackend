@@ -46,4 +46,21 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<DailyTypeTotal> sumAmountsByDayAndTypeInRange(@Param("businessId") Long businessId,
                                                          @Param("start") Instant start,
                                                          @Param("end") Instant end);
+
+    interface BusinessTypeTotal {
+        Long getBusinessId();
+
+        TransactionType getType();
+
+        java.math.BigDecimal getTotal();
+    }
+
+    @Query("select t.business.id as businessId, t.type as type, coalesce(sum(t.amount), 0) as total " +
+            "from Transaction t " +
+            "where t.business.user.id = :userId and t.business.archived = false " +
+            "and t.transactionDate >= :start and t.transactionDate < :end " +
+            "group by t.business.id, t.type")
+    List<BusinessTypeTotal> sumActiveBusinessAmountsByTypeInRange(@Param("userId") Long userId,
+                                                                   @Param("start") Instant start,
+                                                                   @Param("end") Instant end);
 }

@@ -25,8 +25,8 @@ public class Business {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "business_name", nullable = false, length = 150)
@@ -35,6 +35,12 @@ public class Business {
     @Enumerated(EnumType.STRING)
     @Column(name = "business_type", nullable = false, length = 30)
     private BusinessType businessType;
+
+    @Column(nullable = false)
+    private boolean archived;
+
+    @Column(name = "client_id", length = 36)
+    private String clientId;
 
     @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
     private Instant createdAt;

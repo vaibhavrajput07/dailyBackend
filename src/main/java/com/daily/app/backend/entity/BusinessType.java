@@ -8,5 +8,6 @@ public enum BusinessType {
     BAKERY,
     CLINIC,
     GARAGE,
-    HARDWARE_SHOP
+    HARDWARE_SHOP,
+    OTHER
 }
